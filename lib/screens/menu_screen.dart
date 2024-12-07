@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import '../models/menu_model.dart';
 import '../models/user_model.dart';
@@ -35,7 +37,7 @@ class MenuScreen extends StatelessWidget {
           }
 
           // 서버에서 받아온 데이터를 Menu 객체로 파싱
-          final menu = Menu.fromJson(snapshot.data);
+          final menu = Menu.fromJson(jsonDecode(snapshot.data));
 
           return _buildMenuContent(menu, screenWidth, screenHeight);
         },

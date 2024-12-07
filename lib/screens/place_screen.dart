@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import '../models/place_model.dart';
 import '../models/user_model.dart';
@@ -30,7 +32,7 @@ class PlaceScreen extends StatelessWidget {
           }
 
           // 서버에서 받아온 데이터를 Place 객체로 파싱
-          final place = Place.fromJson(snapshot.data);
+          final place = Place.fromJson(jsonDecode(snapshot.data));
 
           return _buildPlaceContent(place, screenWidth, screenHeight);
         },

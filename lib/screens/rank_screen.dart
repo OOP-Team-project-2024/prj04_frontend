@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import '../models/rank_model.dart';
 import '../models/user_model.dart';
@@ -35,7 +37,7 @@ class RankScreen extends StatelessWidget {
           }
 
           // 서버에서 받아온 데이터를 Rank 객체로 파싱
-          final rank = Rank.fromJson(snapshot.data);
+          final rank = Rank.fromJson(jsonDecode(snapshot.data));
 
           return _buildRankContent(rank, screenWidth, screenHeight, user);
         },
