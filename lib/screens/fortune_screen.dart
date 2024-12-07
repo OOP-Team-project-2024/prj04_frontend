@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../models/fortune_model.dart';
@@ -13,9 +15,9 @@ import '../services/rank_service.dart';
 
 class FortuneScreen extends StatelessWidget {
   final UserService _userService = UserService(ApiService('http://10.2.2.2:8080/api/fortune'));
-  final MenuService _menuService = MenuService(ApiService('http://10.2.2.2:8080/api/menu'));
-  final PlaceService _placeService = PlaceService(ApiService('http://10.2.2.2:8080/api/place'));
-  final RankService _rankService = RankService(ApiService('http://10.2.2.2:8080/api/rank'));
+  final MenuService _menuService = MenuService(ApiService('http://10.2.2.2:8080/api/fortune'));
+  final PlaceService _placeService = PlaceService(ApiService('http://10.2.2.2:8080/api/fortune'));
+  final RankService _rankService = RankService(ApiService('http://10.2.2.2:8080/api/fortune'));
 
   @override
   Widget build(BuildContext context) {
@@ -57,10 +59,10 @@ class FortuneScreen extends StatelessWidget {
     final rankResponse = await _rankService.getRank(user);
 
     return {
-      'fortune': TotalFortune.fromJson(fortuneResponse),
-      'menu': Menu.fromJson(menuResponse),
-      'place': Place.fromJson(placeResponse),
-      'rank': Rank.fromJson(rankResponse),
+      'fortune': TotalFortune.fromJson(jsonDecode(fortuneResponse)),
+      'menu': Menu.fromJson(jsonDecode(menuResponse)),
+      'place': Place.fromJson(jsonDecode(placeResponse)),
+      'rank': Rank.fromJson(jsonDecode(rankResponse)),
     };
   }
 
