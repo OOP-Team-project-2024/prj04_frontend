@@ -50,11 +50,16 @@ class MenuScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(height: screenHeight * 0.02),
-
-          // Header Section
-          CircleAvatar(
-            radius: screenWidth * 0.2,
-            backgroundImage: const NetworkImage("https://via.placeholder.com/200x200"),
+          Container(
+            width: screenWidth * 0.5,
+            height: screenWidth * 0.5,
+            decoration: BoxDecoration(
+              image: const DecorationImage(
+                image: AssetImage('assets/mainpic.jpg'),
+                fit: BoxFit.cover,
+              ),
+              shape: BoxShape.circle,
+            ),
           ),
           SizedBox(height: screenHeight * 0.02),
           Text(
