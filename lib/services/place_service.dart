@@ -8,7 +8,7 @@ class PlaceService {
 
   // json decoding 필요
   Future<dynamic> getPlace(User user) async {
-    final response = await _apiService.get('place', user.studentNum);
+    final response = await _apiService.get('place', {'studentNum' : user.studentNum});
     return response.body;
   }
 }

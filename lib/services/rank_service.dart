@@ -8,7 +8,7 @@ class RankService {
 
   // json decoding 필요
   Future<dynamic> getRank(User user) async {
-    final response = await _apiService.get('rank', user.studentNum);
+    final response = await _apiService.get('rank', {'studentNum' : user.studentNum});
     return response.body;
   }
 }

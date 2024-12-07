@@ -6,8 +6,8 @@ class ApiService {
 
   ApiService(this.baseUrl);
 
-  Future<http.Response> get(String endpoint, String requestParam) async {
-    final response = await http.get(Uri.parse('$baseUrl/$endpoint').replace(queryParameters: {'param': requestParam}));
+  Future<http.Response> get(String endpoint, Map<String, String> requestParam) async {
+    final response = await http.get(Uri.parse('$baseUrl/$endpoint').replace(queryParameters: requestParam));
     _handleError(response);
     return response;
   }

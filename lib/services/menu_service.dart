@@ -8,7 +8,7 @@ class MenuService {
 
   // json decoding 필요
   Future<dynamic> getMenu(User user) async {
-    final response = await _apiService.get('menu', user.studentNum);
+    final response = await _apiService.get('menu', {'studentNum' : user.studentNum});
     return response.body;
   }
 }
