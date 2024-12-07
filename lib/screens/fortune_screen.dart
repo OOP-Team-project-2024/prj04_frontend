@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../models/fortune_model.dart';
+import '../models/menu_model.dart';
+import '../models/place_model.dart';
+import '../models/rank_model.dart';
 import '../services/api_service.dart';
 import '../services/fortune_service.dart';
+import '../services/menu_service.dart';
+import '../services/place_service.dart';
+import '../services/rank_service.dart';
 
 class FortuneScreen extends StatelessWidget {
   final UserService _userService = UserService(ApiService('http://10.2.2.2:8080/api/fortune'));
+  final MenuService _menuService = MenuService(ApiService('http://10.2.2.2:8080/api/menu'));
+  final PlaceService _placeService = PlaceService(ApiService('http://10.2.2.2:8080/api/place'));
+  final RankService _rankService = RankService(ApiService('http://10.2.2.2:8080/api/rank'));
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +24,7 @@ class FortuneScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('오늘의 운세')),
       body: FutureBuilder<dynamic>(
-        future: _userService.postUser(user), // Using UserService to fetch data
+        future: _fetchAllData(user),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -25,16 +34,34 @@ class FortuneScreen extends StatelessWidget {
             return const Center(child: Text('운세 정보를 불러오지 못했습니다.'));
           }
 
-          // Parse the response JSON into the TotalFortune object
-          final fortune = TotalFortune.fromJson(snapshot.data);
+          final data = snapshot.data as Map<String, dynamic>;
+          final fortune = data['fortune'] as TotalFortune;
+          final menu = data['menu'] as Menu;
+          final place = data['place'] as Place;
+          final rank = data['rank'] as Rank;
 
-          return _buildFortuneContent(fortune, user);
+          return _buildFortuneContent(fortune, menu, place, rank, user);
         },
       ),
     );
   }
 
-  Widget _buildFortuneContent(TotalFortune fortune, User user) {
+  Future<Map<String, dynamic>> _fetchAllData(User user) async {
+    final fortuneResponse = await _userService.postUser(user);
+    final menuResponse = await _menuService.getMenu(user);
+    final placeResponse = await _placeService.getPlace(user);
+    final rankResponse = await _rankService.getRank(user);
+
+    return {
+      'fortune': TotalFortune.fromJson(fortuneResponse),
+      'menu': Menu.fromJson(menuResponse),
+      'place': Place.fromJson(placeResponse),
+      'rank': Rank.fromJson(rankResponse),
+    };
+  }
+
+  Widget _buildFortuneContent(
+      TotalFortune fortune, Menu menu, Place place, Rank rank, User user) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -47,16 +74,18 @@ class FortuneScreen extends StatelessWidget {
             title: '🌟 나의 점수',
             content: '${fortune.totalScore}점',
           ),
-          if (fortune.fortunes.isNotEmpty)
-            _buildCard(
-              title: '🌟 행운의 장소',
-              content: fortune.fortunes[0].detail,
-            ),
-          if (fortune.fortunes.length > 1)
-            _buildCard(
-              title: '🌟 행운의 메뉴',
-              content: fortune.fortunes[1].detail,
-            ),
+          _buildCard(
+            title: '🍴 행운의 메뉴',
+            content: '${menu.menu} at ${menu.restaurant}',
+          ),
+          _buildCard(
+            title: '📍 행운의 장소',
+            content: place.place,
+          ),
+          _buildCard(
+            title: '🏆 나의 랭크',
+            content: '${rank.myInfo.name}님은 ${rank.myInfo.rank}등 (${rank.myInfo.totalScore}점)',
+          ),
         ],
       ),
     );

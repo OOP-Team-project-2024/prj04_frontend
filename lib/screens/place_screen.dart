@@ -1,529 +1,153 @@
 import 'package:flutter/material.dart';
+import '../models/place_model.dart';
+import '../models/user_model.dart';
+import '../services/api_service.dart';
+import '../services/place_service.dart';
 
 class PlaceScreen extends StatelessWidget {
+  final PlaceService _placeService =
+  PlaceService(ApiService('http://10.2.2.2:8080/api/place'));
+
   @override
   Widget build(BuildContext context) {
+    // 로그인 화면에서 전달받은 User 객체
+    final user = ModalRoute.of(context)?.settings.arguments as User;
+
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('행운의 장소')),
+      body: FutureBuilder<dynamic>(
+        future: _placeService.getPlace(user), // Place 데이터를 가져옴
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('오류 발생: ${snapshot.error}'));
+          } else if (!snapshot.hasData) {
+            return const Center(child: Text('장소 정보를 불러오지 못했습니다.'));
+          }
+
+          // 서버에서 받아온 데이터를 Place 객체로 파싱
+          final place = Place.fromJson(snapshot.data);
+
+          return _buildPlaceContent(place, screenWidth, screenHeight);
+        },
+      ),
+    );
+  }
+
+  Widget _buildPlaceContent(Place place, double screenWidth, double screenHeight) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(height: screenHeight * 0.02),
+          Container(
+            width: screenWidth * 0.5,
+            height: screenWidth * 0.5,
+            decoration: BoxDecoration(
+              image: const DecorationImage(
+                image: AssetImage('assets/mainpic.jpg'),
+                fit: BoxFit.cover,
+              ),
+              shape: BoxShape.circle,
+            ),
+          ),
+          SizedBox(height: screenHeight * 0.02),
+          Text(
+            '푸앙점점',
+            style: TextStyle(
+              color: const Color(0xFF1E2D63),
+              fontSize: screenWidth * 0.1,
+              fontFamily: 'Dongle',
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          SizedBox(height: screenHeight * 0.01),
+          Text(
+            '학점으로 확인하는 오늘의 운세!',
+            style: TextStyle(
+              color: const Color(0xFF1D358A),
+              fontSize: screenWidth * 0.05,
+              fontFamily: 'Dongle',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          SizedBox(height: screenHeight * 0.05),
+          _buildCard(
+            screenWidth: screenWidth,
+            screenHeight: screenHeight,
+            title: place.place,
+            description: place.detail,
+          ),
+          SizedBox(height: screenHeight * 0.02),
+          _buildFriendList(place.otherUsers, screenWidth, screenHeight),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCard({
+    required double screenWidth,
+    required double screenHeight,
+    required String title,
+    required String description,
+  }) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Padding(
+        padding: EdgeInsets.all(screenWidth * 0.05),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: screenWidth * 0.06,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: screenHeight * 0.01),
+            Text(
+              description,
+              style: TextStyle(fontSize: screenWidth * 0.045),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFriendList(List<String> friends, double screenWidth, double screenHeight) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: 1440,
-          height: 1600,
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(color: Colors.white),
-          child: Stack(
-            children: [
-              Positioned(
-                left: 0,
-                top: 0,
-                child: Container(
-                  width: 1440,
-                  height: 60,
-                  decoration: BoxDecoration(color: Color(0xFF0071DB)),
-                ),
-              ),
-              Positioned(
-                left: 510,
-                top: 74,
-                child: Container(
-                  width: 420,
-                  height: 1526,
-                  decoration: ShapeDecoration(
-                    color: Color(0xFFEFF7FF),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(250),
-                        topRight: Radius.circular(250),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 620,
-                top: 151,
-                child: Container(
-                  width: 200,
-                  height: 200,
-                  decoration: ShapeDecoration(
-                    image: DecorationImage(
-                      image:
-                          NetworkImage("https://via.placeholder.com/200x200"),
-                      fit: BoxFit.fill,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 639,
-                top: 427,
-                child: Text(
-                  '푸앙점점',
-                  style: TextStyle(
-                    color: Color(0xFF1E2D63),
-                    fontSize: 80,
-                    fontFamily: 'Dongle',
-                    fontWeight: FontWeight.w700,
-                    height: 0.01,
-                    letterSpacing: -3.20,
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 591,
-                top: 391,
-                child: Text(
-                  '학점으로 확인하는 오늘의 운세!',
-                  style: TextStyle(
-                    color: Color(0xFF1D358A),
-                    fontSize: 36,
-                    fontFamily: 'Dongle',
-                    fontWeight: FontWeight.w400,
-                    height: 0.03,
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 530,
-                top: 1077,
-                child: Container(
-                  width: 380,
-                  height: 420,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        left: 0,
-                        top: 0,
-                        child: Container(
-                          width: 380,
-                          height: 420,
-                          decoration: ShapeDecoration(
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 32,
-                        top: 96,
-                        child: Container(
-                          width: 320,
-                          height: 60,
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                left: 0,
-                                top: 0,
-                                child: Container(
-                                  width: 320,
-                                  height: 60,
-                                  decoration: ShapeDecoration(
-                                    color: Color(0xFF0071DB),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                left: 78,
-                                top: 20,
-                                child: Text(
-                                  '박도현',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w700,
-                                    height: 0.05,
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                left: 19,
-                                top: 12,
-                                child: Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: ShapeDecoration(
-                                    color: Colors.white,
-                                    shape: OvalBorder(),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                left: 278,
-                                top: 12,
-                                child: Text(
-                                  '>',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 32,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w700,
-                                    height: 0.03,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 32,
-                        top: 172,
-                        child: Container(
-                          width: 320,
-                          height: 60,
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                left: 0,
-                                top: 0,
-                                child: Container(
-                                  width: 320,
-                                  height: 60,
-                                  decoration: ShapeDecoration(
-                                    color: Color(0xFF0071DB),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                left: 78,
-                                top: 20,
-                                child: Text(
-                                  '유환중',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w700,
-                                    height: 0.05,
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                left: 19,
-                                top: 12,
-                                child: Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: ShapeDecoration(
-                                    color: Colors.white,
-                                    shape: OvalBorder(),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                left: 278,
-                                top: 12,
-                                child: Text(
-                                  '>',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 32,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w700,
-                                    height: 0.03,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 32,
-                        top: 248,
-                        child: Container(
-                          width: 320,
-                          height: 60,
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                left: 0,
-                                top: 0,
-                                child: Container(
-                                  width: 320,
-                                  height: 60,
-                                  decoration: ShapeDecoration(
-                                    color: Color(0xFF0071DB),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                left: 78,
-                                top: 20,
-                                child: Text(
-                                  '한왕호',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w700,
-                                    height: 0.05,
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                left: 19,
-                                top: 12,
-                                child: Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: ShapeDecoration(
-                                    color: Colors.white,
-                                    shape: OvalBorder(),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                left: 278,
-                                top: 12,
-                                child: Text(
-                                  '>',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 32,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w700,
-                                    height: 0.03,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 32,
-                        top: 324,
-                        child: Container(
-                          width: 320,
-                          height: 60,
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                left: 0,
-                                top: 0,
-                                child: Container(
-                                  width: 320,
-                                  height: 60,
-                                  decoration: ShapeDecoration(
-                                    color: Color(0xFFB8B8B8),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                left: 78,
-                                top: 20,
-                                child: Text(
-                                  '김건우',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w700,
-                                    height: 0.05,
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                left: 19,
-                                top: 12,
-                                child: Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: ShapeDecoration(
-                                    color: Colors.white,
-                                    shape: OvalBorder(),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                left: 278,
-                                top: 12,
-                                child: Text(
-                                  '>',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 32,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w700,
-                                    height: 0.03,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 32,
-                        top: 41,
-                        child: Text(
-                          '나와 같은 장소의 친구는?',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 24,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w700,
-                            height: 0.04,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 530,
-                top: 547,
-                child: Container(
-                  width: 380,
-                  height: 500,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        left: 0,
-                        top: 0,
-                        child: Container(
-                          width: 380,
-                          height: 500,
-                          decoration: ShapeDecoration(
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 25,
-                        top: 33,
-                        child: Container(
-                          width: 330,
-                          height: 220,
-                          decoration: BoxDecoration(color: Color(0xFFD9D9D9)),
-                        ),
-                      ),
-                      Positioned(
-                        left: 25,
-                        top: 275,
-                        child: SizedBox(
-                          width: 330,
-                          height: 200,
-                          child: Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: '{place_name}\n',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 24,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w700,
-                                    height: 0.06,
-                                    letterSpacing: -0.96,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: ' \n',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w700,
-                                    height: 0.09,
-                                    letterSpacing: -0.64,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text:
-                                      '중앙대학교의 청룡호수는 서울캠퍼스에 위치한 상징적인 장소로, 학교의 랜드마크 중 하나입니다. 날씨가 좋은 날에는 간식거리를 들고 여유를 즐기는 학생들을 볼 수 있습니다. 캠퍼스 내에서 자연과 조화롭게 어우러져 학생들과 방문객들에게 아름다운 풍경을 제공합니다. ',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w400,
-                                    height: 0.09,
-                                    letterSpacing: -0.64,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 16,
-                top: 15,
-                child: Container(
-                  height: 30,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        left: 42,
-                        top: 0,
-                        child: Text(
-                          '푸앙점점',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 30,
-                            fontFamily: 'Dongle',
-                            fontWeight: FontWeight.w700,
-                            height: 0.03,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 0,
-                        top: 0,
-                        child: Container(
-                          width: 30,
-                          height: 30,
-                          padding: const EdgeInsets.only(
-                            top: 1.25,
-                            left: 2.50,
-                            right: 1.25,
-                            bottom: 2.50,
-                          ),
-                          clipBehavior: Clip.antiAlias,
-                          decoration: BoxDecoration(),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-// ,
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+        Text(
+          '나와 같은 장소의 친구들',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: screenWidth * 0.05,
+            fontWeight: FontWeight.bold,
           ),
         ),
+        SizedBox(height: screenHeight * 0.02),
+        ...friends.map((friend) {
+          return Card(
+            margin: EdgeInsets.symmetric(vertical: screenHeight * 0.005),
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: const Color(0xFF0071DB),
+                child: const Icon(Icons.person, color: Colors.white),
+              ),
+              title: Text(friend, style: TextStyle(fontSize: screenWidth * 0.045)),
+            ),
+          );
+        }).toList(),
       ],
     );
   }
