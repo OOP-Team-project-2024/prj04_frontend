@@ -8,7 +8,7 @@ import '../services/rank_service.dart';
 
 class RankScreen extends StatelessWidget {
   final RankService _rankService =
-  RankService(ApiService('http://10.2.2.2:8080/api/rank'));
+  RankService(ApiService('http://10.0.2.2:8080/api/fortune'));
 
   RankScreen({Key? key}) : super(key: key);
 

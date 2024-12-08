@@ -14,10 +14,10 @@ import '../services/place_service.dart';
 import '../services/rank_service.dart';
 
 class FortuneScreen extends StatelessWidget {
-  final UserService _userService = UserService(ApiService('http://10.2.2.2:8080/api/fortune'));
-  final MenuService _menuService = MenuService(ApiService('http://10.2.2.2:8080/api/fortune'));
-  final PlaceService _placeService = PlaceService(ApiService('http://10.2.2.2:8080/api/fortune'));
-  final RankService _rankService = RankService(ApiService('http://10.2.2.2:8080/api/fortune'));
+  final UserService _userService = UserService(ApiService('http://10.0.2.2:8080/api/fortune'));
+  final MenuService _menuService = MenuService(ApiService('http://10.0.2.2:8080/api/fortune'));
+  final PlaceService _placeService = PlaceService(ApiService('http://10.0.2.2:8080/api/fortune'));
+  final RankService _rankService = RankService(ApiService('http://10.0.2.2:8080/api/fortune'));
 
   @override
   Widget build(BuildContext context) {

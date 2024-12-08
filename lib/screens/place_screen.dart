@@ -8,7 +8,7 @@ import '../services/place_service.dart';
 
 class PlaceScreen extends StatelessWidget {
   final PlaceService _placeService =
-  PlaceService(ApiService('http://10.2.2.2:8080/api/place'));
+  PlaceService(ApiService('http://10.0.2.2:8080/api/fortune'));
 
   @override
   Widget build(BuildContext context) {

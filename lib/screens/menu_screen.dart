@@ -8,7 +8,7 @@ import '../services/menu_service.dart';
 
 class MenuScreen extends StatelessWidget {
   final MenuService _menuService =
-  MenuService(ApiService('http://10.2.2.2:8080/api/menu'));
+  MenuService(ApiService('http://10.0.2.2:8080/api/fortune'));
 
   MenuScreen({Key? key}) : super(key: key);
 
