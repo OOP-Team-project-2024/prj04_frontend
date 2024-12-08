@@ -107,6 +107,7 @@ class FortuneScreen extends StatelessWidget {
             icon: Icons.sunny,
             title: '오늘의 운세 총평',
             content: fortune.totalFortune,
+            fortunes: fortune.fortunes,
           ),
           _buildCard(
             context: context,
@@ -141,6 +142,7 @@ class FortuneScreen extends StatelessWidget {
     required IconData icon,
     required String title,
     required String content,
+    required List<Fortune> fortunes,
   }) {
     return Container(
       width: double.infinity,
@@ -178,10 +180,44 @@ class FortuneScreen extends StatelessWidget {
             content,
             style: const TextStyle(fontSize: 14),
           ),
+          const SizedBox(height: 20),
+          ...fortunes.map((fortune) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      fortune.type == "재물운" ? "💰" :
+                      fortune.type == "애정운" ? "❤️" :
+                      fortune.type == "학업운" ? "📚" :
+                      fortune.type == "건강운" ? "🦷" : "✨",
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      fortune.type,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  fortune.detail,
+                  style: const TextStyle(fontSize: 14),
+                ),
+                const SizedBox(height: 10),
+              ],
+            );
+          }).toList(),
         ],
       ),
     );
   }
+
 
   Widget _buildCard({
     required BuildContext context,
