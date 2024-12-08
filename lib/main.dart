@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         '/place': (context) => PlaceScreen(),
         '/rank': (context) => RankScreen(),
       },
-      initialRoute: '/', // 시작 페이지
+      initialRoute: '/fortune', // 시작 페이지
     );
   }
 }

@@ -196,7 +196,7 @@ class FortuneScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      fortune.type,
+                      "${fortune.type} - ${fortune.score}점",
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -294,4 +294,5 @@ class FortuneScreen extends StatelessWidget {
     );
   }
 }
+
 
