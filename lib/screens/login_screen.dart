@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: screenHeight * 0.01),
                 Text(
-                  '학점으로 확인하는 오늘의 운세!',
+                  '학번으로 확인하는 오늘의 운세!',
                   style: TextStyle(
                     color: const Color(0xFF1D358A),
                     fontSize: screenWidth * 0.05,
