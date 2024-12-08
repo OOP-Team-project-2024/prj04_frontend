@@ -19,6 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
+      backgroundColor: const Color(0xFFF6F9FF),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

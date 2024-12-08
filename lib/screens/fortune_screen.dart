@@ -28,6 +28,7 @@ class FortuneScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('오늘의 운세'),
         backgroundColor: const Color(0xFF0071DB),
+        titleTextStyle: const TextStyle( color: Colors.white),
       ),
       body: FutureBuilder<dynamic>(
         future: _fetchAllData(user),

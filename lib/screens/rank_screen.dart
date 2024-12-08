@@ -23,7 +23,8 @@ class RankScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('오늘의 운세 랭킹'),
-        backgroundColor: const Color(0xFF0071DB),
+        backgroundColor : const Color(0xFF0071DB),
+        titleTextStyle: const TextStyle( color: Colors.white),
       ),
       body: FutureBuilder<dynamic>(
         future: _rankService.getRank(user), // Rank 데이터를 가져옴
@@ -135,7 +136,7 @@ class RankScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: screenHeight * 0.02),
-          ..._buildRankingList(rank.rankList, screenWidth, screenHeight),
+          ..._buildRankingList(rank.rankList, screenWidth, screenHeight, rank.myInfo.rank),
         ],
       ),
     );
@@ -143,22 +144,22 @@ class RankScreen extends StatelessWidget {
 
   // Helper Function to Build Ranking List
   List<Widget> _buildRankingList(
-      List<RankInfo> rankings, double screenWidth, double screenHeight) {
+      List<RankInfo> rankings, double screenWidth, double screenHeight, int myRank) {
     return rankings.map((rankInfo) {
       return Padding(
         padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
         child: Container(
-          width: screenWidth * 0.9,
+          width: screenWidth * 0.8,
           height: screenHeight * 0.07,
           decoration: BoxDecoration(
-            color: rankInfo.name == '나' ? const Color(0xFFFFA135) : const Color(0xFF0071DB),
+            color: rankInfo.rank == myRank ? const Color(0xFFFFA135) : const Color(0xFF0071DB),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
             children: [
               SizedBox(width: screenWidth * 0.04),
               CircleAvatar(
-                radius: screenHeight * 0.03,
+                radius: screenHeight * 0.028,
                 backgroundColor: Colors.white,
               ),
               SizedBox(width: screenWidth * 0.05),

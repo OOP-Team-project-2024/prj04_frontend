@@ -21,9 +21,11 @@ class MenuScreen extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF6F9FF),
       appBar: AppBar(
         title: const Text('행운의 메뉴'),
-        backgroundColor: const Color(0xFF0071DB),
+        backgroundColor : const Color(0xFF0071DB),
+        titleTextStyle: const TextStyle( color: Colors.white),
       ),
       body: FutureBuilder<dynamic>(
         future: _menuService.getMenu(user), // Menu 데이터를 가져옴
@@ -125,7 +127,7 @@ class MenuScreen extends StatelessWidget {
 
           // Friends Section
           Text(
-            '나와 같은 메뉴를 선택한 친구들',
+            '나와 같은 메뉴의 친구들',
             style: TextStyle(
               color: Colors.black,
               fontSize: screenWidth * 0.05,
@@ -146,7 +148,7 @@ class MenuScreen extends StatelessWidget {
       return Padding(
         padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
         child: Container(
-          width: screenWidth * 0.9,
+          width: screenWidth * 0.8,
           height: screenHeight * 0.07,
           decoration: BoxDecoration(
             color: const Color(0xFF0071DB),
@@ -156,7 +158,7 @@ class MenuScreen extends StatelessWidget {
             children: [
               SizedBox(width: screenWidth * 0.04),
               CircleAvatar(
-                radius: screenHeight * 0.03,
+                radius: screenHeight * 0.028,
                 backgroundColor: Colors.white,
               ),
               SizedBox(width: screenWidth * 0.05),
